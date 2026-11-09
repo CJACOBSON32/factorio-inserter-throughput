@@ -21,18 +21,21 @@ local function calculate_throughput(inserter)
 end
 
 -- Format throughput to a reasonable number of decimal places
---@param throughput number
+---@param throughput number
 local function format_throughput(throughput)
   return math.floor(throughput * 100 + 0.5) / 100
 end
 
 -- Add custom_tooltip_fields to all inserter prototypes
-for name, inserter in pairs(data.raw["inserter"]) do
+for _, inserter in pairs(data.raw["inserter"]) do
   local throughput = calculate_throughput(inserter)
 
-  -- Initialize custom_tooltip_fields if it doesn't exist
-  inserter.custom_tooltip_fields = inserter.custom_tooltip_fields or {}
+  if not inserter.custom_tooltip_fields then
+    inserter.custom_tooltip_fields = {}
+  end
 
-  -- Add throughput field
-  inserter.custom_tooltip_fields.throughput = format_throughput(throughput)
+  table.insert(inserter.custom_tooltip_fields, {
+    name = { "custom-tooltip-fields.throughput-name" },
+    value = { "custom-tooltip-fields.throughput-value", tostring(format_throughput(throughput)) },
+  })
 end
