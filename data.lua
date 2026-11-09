@@ -1,34 +1,11 @@
 -- Inserter Throughput Mod
--- Adds throughput information to inserter tooltips using custom_tooltip_fields
+-- Adds base throughput to tooltips (data stage)
 
--- Calculate throughput for inventory-to-inventory transfers (180° rotation each way)
--- Formula: stack_size * rotation_speed * 60 / (2 * pi) items/second
----@param inserter InserterPrototype
-local function calculate_throughput(inserter)
-  local rotation_speed = inserter.rotation_speed or 0.014 -- default inserter rotation speed
-  local stack_size = 1 -- Base stack size (without research bonuses)
+local util = require("util")
 
-  if inserter.stack_size_bonus then
-    stack_size = stack_size + inserter.stack_size_bonus
-  end
-
-  -- For a full cycle (pick up + place), the inserter rotates 2 * 180° = 2π radians
-  -- Time in seconds = 2π / (rotation_speed * 60)
-  -- Throughput = stack_size / time = stack_size * rotation_speed * 60 / (2π)
-  local throughput = stack_size * rotation_speed * 60 / (2 * math.pi)
-
-  return throughput
-end
-
--- Format throughput to a reasonable number of decimal places
----@param throughput number
-local function format_throughput(throughput)
-  return math.floor(throughput * 100 + 0.5) / 100
-end
-
--- Add custom_tooltip_fields to all inserter prototypes
+-- Add custom_tooltip_fields to all inserter prototypes (shows base throughput)
 for _, inserter in pairs(data.raw["inserter"]) do
-  local throughput = calculate_throughput(inserter)
+  local throughput = util.calculate_prototype_throughput(inserter)
 
   if not inserter.custom_tooltip_fields then
     inserter.custom_tooltip_fields = {}
@@ -36,6 +13,6 @@ for _, inserter in pairs(data.raw["inserter"]) do
 
   table.insert(inserter.custom_tooltip_fields, {
     name = { "custom-tooltip-fields.throughput-name" },
-    value = { "custom-tooltip-fields.throughput-value", tostring(format_throughput(throughput)) },
+    value = { "custom-tooltip-fields.throughput-value", tostring(util.format_throughput_number(throughput)) },
   })
 end
