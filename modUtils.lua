@@ -13,9 +13,35 @@ util.inserter_types = {
   burner_inserter = "burner-inserter",
 }
 
+local BASE_STACK_SIZES = {
+  [util.inserter_types.inserter] = 1,
+  [util.inserter_types.fast_inserter] = 1,
+  [util.inserter_types.long_hand_inserter] = 1,
+  [util.inserter_types.bulk_inserter] = 2,
+  [util.inserter_types.stack_inserter] = 5,
+  [util.inserter_types.burner_inserter] = 1
+}
+
 util.inserter_types_array = {}
 for _, value in pairs(util.inserter_types) do
   table.insert(util.inserter_types_array, value)
+end
+
+---Fetch the base stack size for an inserter prototype
+---@param type string
+---@param force LuaForce
+---@return integer
+local function get_inserter_stack_size_bonus(type, force)
+  local inserter_base_stack_sizes = {
+    [util.inserter_types.burner_inserter] = force.inserter_stack_size_bonus,
+    [util.inserter_types.inserter] = force.inserter_stack_size_bonus,
+    [util.inserter_types.fast_inserter] = force.inserter_stack_size_bonus,
+    [util.inserter_types.long_hand_inserter] = force.inserter_stack_size_bonus,
+    [util.inserter_types.bulk_inserter] = force.bulk_inserter_capacity_bonus,
+    [util.inserter_types.stack_inserter] = force.bulk_inserter_capacity_bonus
+  }
+  
+  return inserter_base_stack_sizes[type]
 end
 
 --- Calculate throughput from rotation speed and effective stack size
@@ -31,7 +57,7 @@ end
 ---@return number
 function util.calculate_prototype_throughput(inserter)
   local rotation_speed = inserter.rotation_speed or DEFAULT_ROTATION_SPEED
-  local stack_size = 1 + ( inserter.stack_size_bonus or 0 )
+  local stack_size = BASE_STACK_SIZES[inserter.type]
   return util.calculate_throughput(rotation_speed, stack_size)
 end
 
@@ -42,7 +68,14 @@ end
 function util.calculate_entity_throughput(inserter, force)
   local prototype = inserter.prototype
   local rotation_speed = prototype.get_inserter_rotation_speed(inserter.quality) or DEFAULT_ROTATION_SPEED
-  local stack_size = 1 + (prototype.inserter_stack_size_bonus or 0) + force.inserter_stack_size_bonus
+  local stack_size = 1 + get_inserter_stack_size_bonus(inserter.name, force)
+
+  if inserter.name == util.inserter_types.stack_inserter then
+    stack_size = stack_size + 4
+  end
+
+  game.print("stack_size: " .. stack_size .. " inserter_name: " .. inserter.name)
+
   return util.calculate_throughput(rotation_speed, stack_size)
 end
 
