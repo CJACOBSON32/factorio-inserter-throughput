@@ -4,27 +4,26 @@ local util = {}
 
 local DEFAULT_ROTATION_SPEED = 0.014
 
+util.inserter_types = {
+  inserter = "inserter",
+  fast_inserter = "fast-inserter",
+  long_hand_inserter = "long-handed-inserter",
+  bulk_inserter = "bulk-inserter",
+  stack_inserter = "stack-inserter",
+  burner_inserter = "burner-inserter",
+}
+
+util.inserter_types_array = {}
+for _, value in pairs(util.inserter_types) do
+  table.insert(util.inserter_types_array, value)
+end
+
 --- Calculate throughput from rotation speed and effective stack size
 ---@param rotation_speed number
 ---@param stack_size number
 ---@return number throughput in items/second
 function util.calculate_throughput(rotation_speed, stack_size)
-  return stack_size * rotation_speed * 60 / (2 * math.pi)
-end
-
---- Get effective stack size from prototype bonus and optional research bonus
----@param prototype_bonus number|nil
----@param research_bonus number|nil
----@return number
-function util.get_effective_stack_size(prototype_bonus, research_bonus)
-  local stack_size = 1
-  if prototype_bonus then
-    stack_size = stack_size + prototype_bonus
-  end
-  if research_bonus then
-    stack_size = stack_size + research_bonus
-  end
-  return stack_size
+  return stack_size * rotation_speed * 60
 end
 
 --- Calculate throughput for an inserter prototype (data stage)
@@ -32,7 +31,7 @@ end
 ---@return number
 function util.calculate_prototype_throughput(inserter)
   local rotation_speed = inserter.rotation_speed or DEFAULT_ROTATION_SPEED
-  local stack_size = util.get_effective_stack_size(inserter.stack_size_bonus, nil)
+  local stack_size = 1 + ( inserter.stack_size_bonus or 0 )
   return util.calculate_throughput(rotation_speed, stack_size)
 end
 
@@ -42,19 +41,9 @@ end
 ---@return number
 function util.calculate_entity_throughput(inserter, force)
   local prototype = inserter.prototype
-  local rotation_speed = prototype.rotation_speed or DEFAULT_ROTATION_SPEED
-  local stack_size = util.get_effective_stack_size(
-    prototype.stack_size_bonus,
-    force.inserter_stack_size_bonus
-  )
+  local rotation_speed = prototype.get_inserter_rotation_speed(inserter.quality) or DEFAULT_ROTATION_SPEED
+  local stack_size = 1 + (prototype.inserter_stack_size_bonus or 0) + force.inserter_stack_size_bonus
   return util.calculate_throughput(rotation_speed, stack_size)
-end
-
---- Format throughput to 2 decimal places (returns number for data stage)
----@param throughput number
----@return number
-function util.format_throughput_number(throughput)
-  return math.floor(throughput * 100 + 0.5) / 100
 end
 
 --- Format throughput to 2 decimal places (returns string for runtime)

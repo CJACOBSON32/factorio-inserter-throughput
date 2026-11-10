@@ -1,7 +1,7 @@
 -- Inserter Throughput Mod
 -- Adds base throughput to tooltips (data stage)
 
-local util = require("util")
+local util = require("modUtils")
 
 -- Add custom_tooltip_fields to all inserter prototypes (shows base throughput)
 for _, inserter in pairs(data.raw["inserter"]) do
@@ -13,6 +13,6 @@ for _, inserter in pairs(data.raw["inserter"]) do
 
   table.insert(inserter.custom_tooltip_fields, {
     name = { "custom-tooltip-fields.throughput-name" },
-    value = { "custom-tooltip-fields.throughput-value", tostring(util.format_throughput_number(throughput)) },
+    value = { "custom-tooltip-fields.throughput-value", util.format_throughput_string(throughput) },
   })
 end

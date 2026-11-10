@@ -1,7 +1,7 @@
 -- Inserter Throughput Mod - Runtime Script
 -- Sets a RuntimeTooltipField on inserters with accurate throughput (includes research bonuses)
 
-local util = require("util")
+local util = require("modUtils")
 
 local THROUGHPUT_FIELD_ID = 1
 
@@ -10,14 +10,19 @@ local function update_tooltip(inserter)
   inserter.set_tooltip_field({
     id = THROUGHPUT_FIELD_ID,
     name = { "runtime-tooltip-fields.throughput-name" },
-    value = { "runtime-tooltip-fields.throughput-value", util.format_throughput_string(util.calculate_entity_throughput(inserter, inserter.force)) },
+    value = {
+      "runtime-tooltip-fields.throughput-value",
+      util.format_throughput_string(util.calculate_entity_throughput(inserter, inserter.force))
+    },
   })
 end
 
 ---@param force LuaForce
 local function update_force_inserters(force)
   for _, surface in pairs(game.surfaces) do
-    for _, inserter in pairs(surface.find_entities_filtered({ type = "inserter", force = force })) do
+    ---@type LuaSurface
+    local surface = surface
+    for _, inserter in pairs(surface.find_entities_filtered({ type = util.inserter_types_array, force = force })) do
       update_tooltip(inserter)
     end
   end
