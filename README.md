@@ -8,7 +8,6 @@ While other mods exist that show inserter throughput, none of them felt like the
 
 ## Screenshot
 
-<!-- TODO: Add screenshot of the mod in action -->
 ![Inserter Throughput in Action](screenshot.png)
 
 ## Mod Portal
