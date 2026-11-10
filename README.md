@@ -13,7 +13,7 @@ While other mods exist that show inserter throughput, none of them felt like the
 ## Mod Portal
 
 <!-- TODO: Add link to Factorio Mod Portal page -->
-[Download on Factorio Mod Portal](#)
+[Download on Factorio Mod Portal](https://mods.factorio.com/mod/inserter-throughput-display)
 
 ## Building
 
