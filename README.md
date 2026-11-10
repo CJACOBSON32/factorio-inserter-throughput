@@ -4,7 +4,7 @@ A Factorio mod that displays the throughput of inserters directly in their toolt
 
 ## Why This Mod?
 
-While other mods exist that show inserter throughput, none of them felt like they belonged in vanilla Factorio. This mod aims to present throughput information in a way that integrates seamlessly with the base game's UI, as if it were always meant to be there.
+While other mods exist that show inserter throughput, none of them felt like they belonged in vanilla Factorio. This mod aims to present throughput information in a way that integrates with the existing factorio tooltips.
 
 ## Screenshot
 
