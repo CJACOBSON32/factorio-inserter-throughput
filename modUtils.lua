@@ -74,8 +74,6 @@ function util.calculate_entity_throughput(inserter, force)
     stack_size = stack_size + 4
   end
 
-  game.print("stack_size: " .. stack_size .. " inserter_name: " .. inserter.name)
-
   return util.calculate_throughput(rotation_speed, stack_size)
 end
 
