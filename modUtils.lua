@@ -41,7 +41,7 @@ local function get_inserter_stack_size_bonus(type, force)
     [util.inserter_types.stack_inserter] = force.bulk_inserter_capacity_bonus
   }
   
-  return inserter_base_stack_sizes[type]
+  return inserter_base_stack_sizes[type] or force.inserter_stack_size_bonus
 end
 
 --- Calculate throughput from rotation speed and effective stack size
