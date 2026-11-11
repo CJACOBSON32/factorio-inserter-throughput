@@ -3,16 +3,20 @@
 
 local util = require("modUtils")
 
--- Add custom_tooltip_fields to all inserter prototypes (shows base throughput)
-for _, inserter in pairs(data.raw["inserter"]) do
-  local throughput = util.calculate_prototype_throughput(inserter)
+if settings.startup["show-base-throughput"].value then
+  -- Add custom_tooltip_fields to all inserter prototypes (shows base throughput)
+  for _, inserter in pairs(data.raw["inserter"]) do
+    local throughput = util.calculate_prototype_throughput(inserter)
 
-  if not inserter.custom_tooltip_fields then
-    inserter.custom_tooltip_fields = {}
+    if not inserter.custom_tooltip_fields then
+      inserter.custom_tooltip_fields = {}
+    end
+
+    table.insert(inserter.custom_tooltip_fields, {
+      name = { "custom-tooltip-fields.throughput-name" },
+      value = { "custom-tooltip-fields.throughput-value", util.format_throughput_string(throughput) },
+    })
+
+    log(serpent.block(inserter))
   end
-
-  table.insert(inserter.custom_tooltip_fields, {
-    name = { "custom-tooltip-fields.throughput-name" },
-    value = { "custom-tooltip-fields.throughput-value", util.format_throughput_string(throughput) },
-  })
 end
